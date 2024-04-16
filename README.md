@@ -1,5 +1,5 @@
 Hola guapis
-instalado:
+tenemos instalado:
 
 express
 prisma
