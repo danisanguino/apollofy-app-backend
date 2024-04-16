@@ -1,0 +1,103 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mongodb"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id String @id @default(auto()) @map("_id") @db.ObjectId
+  username String @unique
+  name String
+  lastname String
+  email String @unique
+  password String
+  img String @default("https://asset.cloudinary.com/dqm1upnhh/08f746f4e6f77fb29646558dce148803")
+  role String
+  tracks Track[]
+  albums Album[]
+  artists Artist[]
+  playlists Playlist[]
+}
+
+model Track {
+  id String @id @default(auto()) @map("_id") @db.ObjectId
+  title String
+  url String
+  thumbnail String
+  likes Int
+
+  genresId String[] @db.ObjectId
+  genres Genre[] @relation(fields: [genresId], references: [id])
+
+  artistId String @db.ObjectId
+  artist Artist @relation(fields: [artistId], references: [id], onDelete: Cascade)
+
+  albumId String @db.ObjectId
+  album Album @relation(fields: [albumId], references: [id], onDelete: Cascade)
+
+  playlistsId String[] @db.ObjectId
+  playlists Playlist[] @relation(fields: [playlistsId], references: [id])
+
+  userId String @db.ObjectId
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model Album {
+  id String @id @default(auto()) @map("_id") @db.ObjectId
+  name String
+  thumbnail String
+  likes Int
+  
+  artistId String @db.ObjectId
+  artist Artist @relation(fields: [artistId], references: [id], onDelete: Cascade)
+
+  tracks Track[]
+
+  userId String @db.ObjectId
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model Artist {
+  id String @id @default(auto()) @map("_id") @db.ObjectId
+  name String
+  followers Int
+  img String @default("https://asset.cloudinary.com/dqm1upnhh/08f746f4e6f77fb29646558dce148803")
+
+  tracks Track[]
+  albums Album[]
+
+  userId String @db.ObjectId
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model Playlist {
+  id String @id @default(auto()) @map("_id") @db.ObjectId
+  name String
+  description String
+  thumbnail String
+  public Boolean
+  likes Int
+
+  tracksId String[] @db.ObjectId
+  tracks Track[] @relation(fields: [tracksId], references: [id])
+
+  userId String @db.ObjectId
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model Genre {
+  id String @id @default(auto()) @map("_id") @db.ObjectId
+  name String @unique
+  
+  tracksId String[] @db.ObjectId
+  tracks Track[] @relation(fields: [tracksId], references: [id])
+}

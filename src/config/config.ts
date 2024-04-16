@@ -1,4 +1,6 @@
-import dotenv from "dotenv";
+import dotenv from 'dotenv';
+
+dotenv.config();
 
 type TConfig = {
   [key: string]: EnviromentConfig;
@@ -17,7 +19,7 @@ type DBConfig = {
   URI: string;
 };
 
-const ENV = process.env.NODE_ENV ?? "development";
+const ENV = process.env.NODE_ENV ?? 'development';
 
 const CONFIG: TConfig = {
   development: {
@@ -25,7 +27,7 @@ const CONFIG: TConfig = {
       PORT: process.env.PORT || 4001,
     },
     db: {
-      URI: process.env.MONGODB_URI || "mongodb://localhost:27017/apollofydb/",
+      URI: process.env.DATABASE_URL || 'mongodb://localhost:27017/apollofydb/',
     },
   },
   production: {
@@ -33,7 +35,7 @@ const CONFIG: TConfig = {
       PORT: process.env.PORT || 8081,
     },
     db: {
-      URI: process.env.MONGODB_URI || "mongodb://localhost:27017/apollofydb/",
+      URI: process.env.DATABASE_URL || 'mongodb://localhost:27017/apollofydb/',
     },
   },
 };
