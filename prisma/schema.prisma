@@ -21,6 +21,7 @@ model User {
   email     String     @unique
   password  String
   img       String     @default("https://asset.cloudinary.com/dqm1upnhh/08f746f4e6f77fb29646558dce148803")
+  public_id_img String?
   role      String     @default("user")
   tracks    Track[]
   albums    Album[]
@@ -35,7 +36,7 @@ model Track {
   title     String
   url       String
   thumbnail String
-  likes     Int
+  likes     Int @default(0)
 
   genresId String[] @db.ObjectId
   genres   Genre[]  @relation(fields: [genresId], references: [id])
@@ -44,7 +45,7 @@ model Track {
   artist   Artist @relation(fields: [artistId], references: [id], onDelete: Cascade)
 
   albumId String @db.ObjectId
-  album   Album  @relation(fields: [albumId], references: [id], onDelete: Cascade)
+  album   Album?  @relation(fields: [albumId], references: [id], onDelete: Cascade)
 
   playlistsId String[]   @db.ObjectId
   playlists   Playlist[] @relation(fields: [playlistsId], references: [id])
@@ -59,7 +60,7 @@ model Album {
   id        String @id @default(auto()) @map("_id") @db.ObjectId
   name      String
   thumbnail String
-  likes     Int
+  likes     Int @default(0)
 
   artistId String @db.ObjectId
   artist   Artist @relation(fields: [artistId], references: [id], onDelete: Cascade)
@@ -93,7 +94,7 @@ model Playlist {
   description String
   thumbnail   String
   public      Boolean
-  likes       Int
+  likes       Int @default(0)
 
   tracksId String[] @db.ObjectId
   tracks   Track[]  @relation(fields: [tracksId], references: [id])
