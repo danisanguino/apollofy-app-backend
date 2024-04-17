@@ -1,5 +1,7 @@
 import { Request, Response } from "express";
 import prisma from "../db/prismaClient";
+import fs from "fs-extra";
+import { uploadImageCloudinary } from "../utils/cloudinary";
 
 export const getAllUsers = async (req: Request, res: Response) => {
   try {
@@ -11,7 +13,7 @@ export const getAllUsers = async (req: Request, res: Response) => {
 };
 
 export const createUser = async (req: Request, res: Response) => {
-  const { name, lastname, email, password, img, username, role } = req.body;
+  const { name, lastname, email, password, username, role } = req.body;
   if (!name || !lastname || !email || !password || !username) {
     return res
       .status(400)
@@ -19,6 +21,7 @@ export const createUser = async (req: Request, res: Response) => {
         "The fields name, lastname, email, password and username are required"
       );
   }
+  console.log(req.files); // 💕
   try {
     const newUser = await prisma.user.create({
       data: {
@@ -26,11 +29,33 @@ export const createUser = async (req: Request, res: Response) => {
         lastname,
         email,
         password,
-        img,
         username,
         role,
       },
     });
+
+    if (req.files && req.files.img) {
+      if (Array.isArray(req.files.img)) {
+        return res.status(400).json({
+          msg: "You can only upload one file per user.",
+        });
+      } else {
+        const result = await uploadImageCloudinary(req.files.img.tempFilePath); // Subir el archivo único
+        const newUserImg = await prisma.user.update({
+          where: { id: newUser.id },
+          data: {
+            img: result.secure_url,
+            public_id_img: result.public_id,
+          },
+        });
+        await fs.unlink(req.files.img.tempFilePath);
+        console.log(result);
+        return res.status(201).send({
+          msg: "New user created",
+          data: newUserImg,
+        });
+      }
+    }
     return res.status(201).send({
       msg: "New user created",
       data: newUser,
