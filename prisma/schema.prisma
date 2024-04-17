@@ -36,6 +36,7 @@ model Track {
   title     String
   url       String
   thumbnail String
+  public_id_thumbnail String
   likes     Int @default(0)
 
   genresId String[] @db.ObjectId
