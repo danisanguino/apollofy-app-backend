@@ -10,3 +10,7 @@ cloudinary.config({
 export const uploadImageCloudinary = async (filepath: string) => {
   return await cloudinary.uploader.upload(filepath, { folder: "apollofy" });
 };
+
+export const deleteImageCloudinary = async (publicId: string) =>{
+  return await cloudinary.uploader.destroy(publicId);
+}
