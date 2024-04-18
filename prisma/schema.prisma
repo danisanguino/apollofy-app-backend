@@ -17,9 +17,8 @@ model User {
   id        String     @id @default(auto()) @map("_id") @db.ObjectId
   username  String     @unique
   name      String
-  lastname  String
   email     String     @unique
-  password  String
+  password  String?
   img       String     @default("https://asset.cloudinary.com/dqm1upnhh/08f746f4e6f77fb29646558dce148803")
   public_id_img String?
   role      String     @default("user")
@@ -35,6 +34,7 @@ model Track {
   id        String @id @default(auto()) @map("_id") @db.ObjectId
   title     String
   url       String
+  public_id_url String
   thumbnail String
   public_id_thumbnail String
   likes     Int @default(0)
@@ -45,7 +45,7 @@ model Track {
   artistId String @db.ObjectId
   artist   Artist @relation(fields: [artistId], references: [id], onDelete: Cascade)
 
-  albumId String @db.ObjectId
+  albumId String? @db.ObjectId
   album   Album?  @relation(fields: [albumId], references: [id], onDelete: Cascade)
 
   playlistsId String[]   @db.ObjectId
