@@ -18,7 +18,7 @@ export const getAllTracks = async (req: Request, res: Response) => {
 };
 
 export const createTrack = async (req: Request, res: Response) => {
-  const { title, albumId, artistId } = req.body;
+  const { title, albumId, artistId, genresId } = req.body;
   const thumbnail = req.files?.thumbnail;
   const url = req.files?.url;
   const { userId } = req.params;
@@ -43,8 +43,9 @@ export const createTrack = async (req: Request, res: Response) => {
           title,
           url: resultUrl.secure_url,
           public_id_url: resultUrl.public_id,
-          // albumId,
+          albumId,
           artistId,
+          genresId,
           userId,
           thumbnail: resultThumbnail.secure_url,
           public_id_thumbnail: resultThumbnail.public_id,
@@ -63,17 +64,17 @@ export const createTrack = async (req: Request, res: Response) => {
 };
 
 export const updateTrack = async (req: Request, res: Response) => {
-  const { title, albumId, artistId, likes } = req.body;
+  const { title, albumId, artistId, likes, genresId } = req.body;
   const thumbnail = req.files?.thumbnail;
-  const { userId } = req.params;
+  const { trackId } = req.params;
   try {
     const updatedTrack = await prisma.track.update({
-      where: { id: userId },
+      where: { id: trackId },
       data: {
         title,
         albumId,
         artistId,
-        userId,
+        genresId,
         likes,
       },
     });
@@ -91,7 +92,7 @@ export const updateTrack = async (req: Request, res: Response) => {
       } else {
         const result = await uploadImageCloudinary(thumbnail.tempFilePath); // Subir el archivo único
         const newTrackThumbnail = await prisma.track.update({
-          where: { id: userId },
+          where: { id: trackId },
           data: {
             thumbnail: result.secure_url,
             public_id_thumbnail: result.public_id,
