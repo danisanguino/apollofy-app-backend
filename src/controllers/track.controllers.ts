@@ -63,7 +63,7 @@ export const createTrack = async (req: Request, res: Response) => {
 };
 
 export const updateTrack = async (req: Request, res: Response) => {
-  const { title, albumId, artistId } = req.body;
+  const { title, albumId, artistId, likes } = req.body;
   const thumbnail = req.files?.thumbnail;
   const { userId } = req.params;
   try {
@@ -74,6 +74,7 @@ export const updateTrack = async (req: Request, res: Response) => {
         albumId,
         artistId,
         userId,
+        likes,
       },
     });
     if (req.files && thumbnail) {
