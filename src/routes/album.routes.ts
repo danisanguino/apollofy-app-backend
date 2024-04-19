@@ -10,7 +10,7 @@ const albumsRoutes = Router();
 
 albumsRoutes.get('/', getAllAlbums);
 albumsRoutes.post('/', createAlbum);
-albumsRoutes.patch('/:userId', updateAlbum);
-albumsRoutes.delete('/:userId', deleteAlbum);
+albumsRoutes.patch('/:albumId', updateAlbum);
+albumsRoutes.delete('/:albumId', deleteAlbum);
 
 export default albumsRoutes;
