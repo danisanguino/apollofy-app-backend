@@ -61,6 +61,7 @@ model Album {
   id        String @id @default(auto()) @map("_id") @db.ObjectId
   name      String
   thumbnail String
+  public_id_thumbnail String
   likes     Int @default(0)
 
   artistId String @db.ObjectId
@@ -79,6 +80,7 @@ model Artist {
   name      String
   followers Int
   img       String @default("https://asset.cloudinary.com/dqm1upnhh/08f746f4e6f77fb29646558dce148803")
+  public_id_img String
 
   tracks Track[]
   albums Album[]
@@ -93,7 +95,8 @@ model Playlist {
   id          String  @id @default(auto()) @map("_id") @db.ObjectId
   name        String
   description String
-  thumbnail   String
+  thumbnail   String?
+  public_id_thumbnail String?
   public      Boolean
   likes       Int @default(0)
 
