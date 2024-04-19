@@ -29,6 +29,7 @@ export const createTrack = async (req: Request, res: Response) => {
       .send('The fields title, url, thumbnail are required');
   }
   try {
+    
     if (Array.isArray(thumbnail) || Array.isArray(url)) {
       return res.status(400).json({
         msg: 'You can only upload one file per track.',
