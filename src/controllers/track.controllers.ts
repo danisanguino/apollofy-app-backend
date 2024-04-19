@@ -10,15 +10,24 @@ import {
 
 export const getAllTracks = async (req: Request, res: Response) => {
   try {
-    const allTracks = await prisma.track.findMany();
+    const allTracks = await prisma.track.findMany({
+      include: {
+        artist: true,
+        genres: true,
+        album: true,
+        playlists: true,
+      },
+    });
     res.status(201).send({ msg: 'Here are all your tracks', data: allTracks });
   } catch (error) {
+    console.log(error);
     res.status(400).send({ msg: 'Error', error });
   }
 };
 
 export const createTrack = async (req: Request, res: Response) => {
   const { title, albumId, artistId, genresId } = req.body;
+  console.log('🚀 ~ createTrack ~ genresId:', typeof genresId);
   const thumbnail = req.files?.thumbnail;
   const url = req.files?.url;
   const { userId } = req.params;
@@ -29,7 +38,6 @@ export const createTrack = async (req: Request, res: Response) => {
       .send('The fields title, url, thumbnail are required');
   }
   try {
-    
     if (Array.isArray(thumbnail) || Array.isArray(url)) {
       return res.status(400).json({
         msg: 'You can only upload one file per track.',
@@ -44,28 +52,41 @@ export const createTrack = async (req: Request, res: Response) => {
           title,
           url: resultUrl.secure_url,
           public_id_url: resultUrl.public_id,
-          albumId,
-          artistId,
-          genresId,
-          userId,
+          artist: { connect: { id: artistId } },
+          genres: { connect: genresId.map((g: any) => ({ id: g })) },
+          user: { connect: { id: userId } },
           thumbnail: resultThumbnail.secure_url,
           public_id_thumbnail: resultThumbnail.public_id,
         },
       });
+      console.log('🚀 ~ createTrack ~ newTrack:', newTrack);
       await fs.unlink(thumbnail.tempFilePath);
       await fs.unlink(url.tempFilePath);
+      if (albumId) {
+        const updateTrack = await prisma.track.update({
+          where: { id: newTrack.id },
+          data: {
+            album: { connect: { id: albumId } },
+          },
+        });
+        return res.status(201).send({
+          msg: 'New track has been created successfully',
+          data: updateTrack,
+        });
+      }
       return res.status(201).send({
         msg: 'New track has been created successfully',
         data: newTrack,
       });
     }
   } catch (error) {
+    console.log(error);
     return res.status(400).send(error);
   }
 };
 
 export const updateTrack = async (req: Request, res: Response) => {
-  const { title, albumId, artistId, likes, genresId } = req.body;
+  const { title, likes, genresId } = req.body;
   const thumbnail = req.files?.thumbnail;
   const { trackId } = req.params;
   try {
@@ -73,8 +94,6 @@ export const updateTrack = async (req: Request, res: Response) => {
       where: { id: trackId },
       data: {
         title,
-        albumId,
-        artistId,
         genresId,
         likes,
       },
@@ -109,6 +128,7 @@ export const updateTrack = async (req: Request, res: Response) => {
       .status(201)
       .send({ msg: 'The track has been updated', data: updatedTrack });
   } catch (error) {
+    console.log(error);
     res.status(400).send({ msg: 'ERROR' });
   }
 };

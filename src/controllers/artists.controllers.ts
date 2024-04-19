@@ -8,7 +8,12 @@ import fs from 'fs-extra';
 
 export const getAllArtists = async (req: Request, res: Response) => {
   try {
-    const allArtists = await prisma.artist.findMany();
+    const allArtists = await prisma.artist.findMany({
+      include: {
+        tracks: true,
+        albums: true,
+      },
+    });
     res
       .status(201)
       .send({ msg: 'Here are all your artists', data: allArtists });
@@ -18,13 +23,11 @@ export const getAllArtists = async (req: Request, res: Response) => {
 };
 
 export const createArtist = async (req: Request, res: Response) => {
-  const { name, followers } = req.body;
+  const { name } = req.body;
   const img = req.files?.img;
 
-  if (!name || !followers || !img) {
-    return res
-      .status(400)
-      .send('The fields name, url, followers and img are required');
+  if (!name || !img) {
+    return res.status(400).send('The fields name and img are required');
   }
   try {
     if (Array.isArray(img)) {
@@ -36,7 +39,6 @@ export const createArtist = async (req: Request, res: Response) => {
       const newArtist = await prisma.artist.create({
         data: {
           name,
-          followers,
           img: result.secure_url,
           public_id_img: result.public_id,
         },

@@ -1,9 +1,13 @@
 import { Request, Response } from 'express';
 import prisma from '../db/prismaClient';
 
-export const getAllGenres = (req: Request, res: Response) => {
+export const getAllGenres = async (req: Request, res: Response) => {
   try {
-    const allGenres = prisma.genre.findMany();
+    const allGenres = await prisma.genre.findMany({
+      include: {
+        tracks: true,
+      },
+    });
     return res.status(200).send({
       msg: 'All genres',
       data: allGenres,
@@ -13,7 +17,7 @@ export const getAllGenres = (req: Request, res: Response) => {
   }
 };
 
-export const createGenre = (req: Request, res: Response) => {
+export const createGenre = async (req: Request, res: Response) => {
   const { name } = req.body;
 
   if (!name) {
@@ -21,7 +25,7 @@ export const createGenre = (req: Request, res: Response) => {
   }
 
   try {
-    const newGenre = prisma.genre.create({
+    const newGenre = await prisma.genre.create({
       data: {
         name,
       },
@@ -35,12 +39,12 @@ export const createGenre = (req: Request, res: Response) => {
   }
 };
 
-export const updateGenre = (req: Request, res: Response) => {
+export const updateGenre = async (req: Request, res: Response) => {
   const { name } = req.body;
   const { genreId } = req.params;
 
   try {
-    const genreUpdated = prisma.genre.update({
+    const genreUpdated = await prisma.genre.update({
       where: {
         id: genreId,
       },
@@ -57,11 +61,11 @@ export const updateGenre = (req: Request, res: Response) => {
   }
 };
 
-export const deleteGenre = (req: Request, res: Response) => {
+export const deleteGenre = async (req: Request, res: Response) => {
   const { genreId } = req.params;
 
   try {
-    const genreDeleted = prisma.genre.delete({
+    const genreDeleted = await prisma.genre.delete({
       where: { id: genreId },
     });
     return res.status(200).send({

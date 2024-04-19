@@ -80,7 +80,7 @@ model Album {
 model Artist {
   id        String @id @default(auto()) @map("_id") @db.ObjectId
   name      String
-  followers Int
+  followers Int @default(0)
   img       String @default("https://asset.cloudinary.com/dqm1upnhh/08f746f4e6f77fb29646558dce148803")
   public_id_img String
 
@@ -97,7 +97,7 @@ model Playlist {
   id          String  @id @default(auto()) @map("_id") @db.ObjectId
   name        String
   description String
-  thumbnail   String?
+  thumbnail   String @default("https://res.cloudinary.com/dqm1upnhh/image/upload/v1713523849/apollofy/knyiltxyhm1jc6553qfr.jpg")
   public_id_thumbnail String?
   publicPlaylist      Boolean @default(true)
   likes       Int @default(0)
