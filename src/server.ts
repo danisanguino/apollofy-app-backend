@@ -7,6 +7,7 @@ import genreRoutes from './routes/genre.routes';
 import playlistRoutes from './routes/playlist.routes';
 import artistsRoutes from './routes/artists.routes';
 import albumsRoutes from './routes/album.routes';
+import { checkJwtMiddleware } from './middlewares/checkjwt.middlewares';
 
 const app = express();
 
@@ -16,11 +17,11 @@ app.use(urlencoded({ extended: true }));
 app.use(fileUpload({ useTempFiles: true, tempFileDir: './upload' }));
 
 //routes
-app.use('/user', userRoutes);
-app.use('/track', trackRoutes);
-app.use('/genre', genreRoutes);
-app.use('/playlist', playlistRoutes);
-app.use('/artist', artistsRoutes);
-app.use('/album', albumsRoutes);
+app.use('/user', checkJwtMiddleware, userRoutes);
+app.use('/track', checkJwtMiddleware, trackRoutes);
+app.use('/genre', checkJwtMiddleware, genreRoutes);
+app.use('/playlist',checkJwtMiddleware, playlistRoutes);
+app.use('/artist', checkJwtMiddleware, artistsRoutes);
+app.use('/album', checkJwtMiddleware, albumsRoutes);
 
 export default app;
