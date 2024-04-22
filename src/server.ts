@@ -7,10 +7,12 @@ import genreRoutes from './routes/genre.routes';
 import playlistRoutes from './routes/playlist.routes';
 import artistsRoutes from './routes/artists.routes';
 import albumsRoutes from './routes/album.routes';
+import cors from 'cors';
 
 const app = express();
 
 //middlewares
+app.use(cors());
 app.use(express.json());
 app.use(urlencoded({ extended: true }));
 app.use(fileUpload({ useTempFiles: true, tempFileDir: './upload' }));
