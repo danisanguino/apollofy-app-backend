@@ -40,15 +40,9 @@ model Track {
   thumbnail String
   public_id_thumbnail String
   likes     Int @default(0)
-
-  genresId String[] @db.ObjectId
-  genres   Genre[]  @relation(fields: [genresId], references: [id])
-
-  artistId String @db.ObjectId
-  artist   Artist @relation(fields: [artistId], references: [id], onDelete: Cascade)
-
-  albumId String? @db.ObjectId
-  album   Album?  @relation(fields: [albumId], references: [id], onDelete: Cascade)
+  genres    TrackGenre[]
+  albums    TrackAlbum[]
+  artist    TrackArtist[]
 
   playlistsId String[]   @db.ObjectId
   playlists   Playlist[] @relation(fields: [playlistsId], references: [id])
@@ -65,11 +59,9 @@ model Album {
   thumbnail String
   public_id_thumbnail String
   likes     Int @default(0)
+  track     TrackAlbum[]
+  artist    ArtistAlbum[]
 
-  artistId String @db.ObjectId
-  artist   Artist @relation(fields: [artistId], references: [id], onDelete: Cascade)
-
-  tracks Track[]
 
   userId    String[]  @db.ObjectId
   user      User[]     @relation(fields: [userId], references: [id])
@@ -83,9 +75,9 @@ model Artist {
   followers Int @default(0)
   img       String @default("https://asset.cloudinary.com/dqm1upnhh/08f746f4e6f77fb29646558dce148803")
   public_id_img String
-
-  tracks Track[]
-  albums Album[]
+  tracks    TrackArtist[]
+  albums  ArtistAlbum[]
+  
 
   userId    String[]   @db.ObjectId
   user      User[]     @relation(fields: [userId], references: [id] )
@@ -114,9 +106,57 @@ model Playlist {
 model Genre {
   id   String @id @default(auto()) @map("_id") @db.ObjectId
   name String @unique
+  track    TrackGenre[]
 
-  tracksId  String[] @db.ObjectId
-  tracks    Track[]  @relation(fields: [tracksId], references: [id])
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+}
+
+//COLECCIONES COMPARTIDAS
+
+
+model TrackGenre {
+  id        String  @id @default(auto()) @map("_id") @db.ObjectId
+  track     Track   @relation(fields: [trackId], references: [id], onDelete: Cascade)
+  trackId   String  @db.ObjectId
+  genre     Genre   @relation(fields: [genreId], references: [id], onDelete: Cascade)
+  genreId   String  @db.ObjectId
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model TrackAlbum {
+  id        String  @id @default(auto()) @map("_id") @db.ObjectId
+  track     Track   @relation(fields: [trackId], references: [id], onDelete: Cascade)
+  trackId   String  @db.ObjectId
+  album     Album   @relation(fields: [albumId], references: [id], onDelete: Cascade)
+  albumId   String  @db.ObjectId
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model TrackArtist {
+  id        String  @id @default(auto()) @map("_id") @db.ObjectId
+  track     Track   @relation(fields: [trackId], references: [id], onDelete: Cascade)
+  trackId   String  @db.ObjectId
+  artist    Artist   @relation(fields: [artistId], references: [id], onDelete: Cascade)
+  artistId   String  @db.ObjectId
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+}
+
+model ArtistAlbum {
+  id        String  @id @default(auto()) @map("_id") @db.ObjectId
+  artist    Artist   @relation(fields: [artistId], references: [id], onDelete: Cascade)
+  artistId   String  @db.ObjectId
+  album     Album   @relation(fields: [albumId], references: [id], onDelete: Cascade)
+  albumId   String  @db.ObjectId
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
 }
