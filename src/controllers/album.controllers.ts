@@ -11,7 +11,6 @@ export const getAllAlbums = async (req: Request, res: Response) => {
     const allAlbums = await prisma.album.findMany({
       include: {
         artist: true,
-        tracks: true,
       },
     });
     res.status(201).send({ msg: 'Here are all your albums', data: allAlbums });
@@ -41,12 +40,17 @@ export const createAlbum = async (req: Request, res: Response) => {
       const newAlbum = await prisma.album.create({
         data: {
           name,
-          artist: { connect: { id: artistId } },
           thumbnail: resultThumbnail.secure_url,
           public_id_thumbnail: resultThumbnail.public_id,
         },
       });
       await fs.unlink(thumbnail.tempFilePath);
+      await prisma.artistAlbum.create({
+        data: {
+          albumId: newAlbum.id,
+          artistId,
+        },
+      });
       return res.status(201).send({
         msg: 'New album has been created successfully',
         data: newAlbum,

@@ -36,7 +36,7 @@ export const createPlaylist = async (req: Request, res: Response) => {
         name,
         description,
         publicPlaylist,
-        tracks: { connect: tracksId.map((g: any) => ({ id: g })) },
+        // tracks: { connect: tracksId.map((g: any) => ({ id: g })) },
         userId,
       },
     });
@@ -64,6 +64,16 @@ export const createPlaylist = async (req: Request, res: Response) => {
         });
       }
     }
+
+    const tracksRelated = tracksId.map((t: string) => ({
+      trackId: t,
+      playlistId: newPlaylist.id,
+    }));
+
+    await prisma.playlistTrack.createMany({
+      data: tracksRelated,
+    });
+
     return res.status(201).send({
       msg: 'New playlist created',
       data: newPlaylist,
@@ -85,7 +95,6 @@ export const updatePlaylist = async (req: Request, res: Response) => {
         name,
         description,
         publicPlaylist,
-        tracksId,
         likes,
       },
     });
@@ -117,6 +126,23 @@ export const updatePlaylist = async (req: Request, res: Response) => {
           data: newPlaylistThumbnail,
         });
       }
+    }
+
+    if (tracksId && tracksId.length) {
+      const tracksRelated = tracksId.map((t: string) => ({
+        trackId: t,
+        playListId,
+      }));
+
+      await prisma.playlistTrack.deleteMany({
+        where: {
+          playlistId: playListId,
+        },
+      });
+
+      await prisma.playlistTrack.createMany({
+        data: tracksRelated,
+      });
     }
 
     res

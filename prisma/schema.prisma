@@ -10,7 +10,7 @@ generator client {
 
 datasource db {
   provider = "mongodb"
-  url      = env("DATABASE_URL")
+  url      = env("DATABASE_URL")  
 }
 
 model User {
@@ -41,11 +41,9 @@ model Track {
   public_id_thumbnail String
   likes     Int @default(0)
   genres    TrackGenre[]
-  albums    TrackAlbum[]
+  album    TrackAlbum[]
   artist    TrackArtist[]
-
-  playlistsId String[]   @db.ObjectId
-  playlists   Playlist[] @relation(fields: [playlistsId], references: [id])
+  playlists   PlaylistTrack[]
 
   userId    String   @db.ObjectId
   user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
@@ -94,8 +92,7 @@ model Playlist {
   publicPlaylist      Boolean @default(true)
   likes       Int @default(0)
 
-  tracksId String[] @db.ObjectId
-  tracks   Track[]  @relation(fields: [tracksId], references: [id])
+  tracks   PlaylistTrack[]
 
   userId    String   @db.ObjectId
   user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
@@ -159,4 +156,15 @@ model ArtistAlbum {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
+}
+
+model PlaylistTrack {
+  id        String  @id @default(auto()) @map("_id") @db.ObjectId
+  playlist Playlist @relation(fields: [playlistId], references: [id], onDelete: Cascade)
+  playlistId String @db.ObjectId
+  track Track @relation(fields: [trackId], references: [id], onDelete: Cascade)
+  trackId String @db.ObjectId
+
+  createtAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }

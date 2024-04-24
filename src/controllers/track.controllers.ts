@@ -27,7 +27,6 @@ export const getAllTracks = async (req: Request, res: Response) => {
 
 export const createTrack = async (req: Request, res: Response) => {
   const { title, albumId, artistId, genresId } = req.body;
-  console.log('🚀 ~ createTrack ~ genresId:', typeof genresId);
   const thumbnail = req.files?.thumbnail;
   const url = req.files?.url;
   const { userId } = req.params;
@@ -52,30 +51,46 @@ export const createTrack = async (req: Request, res: Response) => {
           title,
           url: resultUrl.secure_url,
           public_id_url: resultUrl.public_id,
-          artist: { connect: { id: artistId } },
-          genres: { connect: genresId.map((g: any) => ({ id: g })) },
           user: { connect: { id: userId } },
           thumbnail: resultThumbnail.secure_url,
           public_id_thumbnail: resultThumbnail.public_id,
         },
       });
-      console.log('🚀 ~ createTrack ~ newTrack:', newTrack);
       await fs.unlink(thumbnail.tempFilePath);
       await fs.unlink(url.tempFilePath);
+
+      const genresRelated = genresId.map((g: string) => ({
+        trackId: newTrack.id,
+        genreId: g,
+      }));
+
+      await prisma.trackGenre.createMany({
+        data: genresRelated,
+      });
+
+      await prisma.trackArtist.create({
+        data: {
+          trackId: newTrack.id,
+          artistId,
+        },
+      });
+
       if (albumId) {
-        const updateTrack = await prisma.track.update({
-          where: { id: newTrack.id },
+        await prisma.trackAlbum.create({
           data: {
-            album: { connect: { id: albumId } },
+            trackId: newTrack.id,
+            albumId,
           },
         });
+
         return res.status(201).send({
-          msg: 'New track has been created successfully',
-          data: updateTrack,
+          msg: 'New track with album has been created successfully',
+          data: newTrack,
         });
       }
+
       return res.status(201).send({
-        msg: 'New track has been created successfully',
+        msg: 'New track without album has been created successfully',
         data: newTrack,
       });
     }
@@ -94,7 +109,6 @@ export const updateTrack = async (req: Request, res: Response) => {
       where: { id: trackId },
       data: {
         title,
-        genresId,
         likes,
       },
     });
@@ -123,6 +137,22 @@ export const updateTrack = async (req: Request, res: Response) => {
           .status(201)
           .send({ msg: 'The track has been updated', data: newTrackThumbnail });
       }
+    }
+    if (genresId && genresId.length) {
+      const genres = genresId.map((g: string) => ({
+        trackId,
+        genreId: g,
+      }));
+
+      await prisma.trackGenre.deleteMany({
+        where: {
+          trackId: trackId,
+        },
+      });
+
+      await prisma.trackGenre.createMany({
+        data: genres,
+      });
     }
     return res
       .status(201)
