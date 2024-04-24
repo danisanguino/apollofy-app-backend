@@ -17,7 +17,7 @@ export const getAllUsers = async (req: Request, res: Response) => {
 
 export const createUser = async (req: Request, res: Response) => {
   const { name, email, password, username, role } = req.body;
-  if (!name || !email || !password || !username) {
+  if (!name || !email || !username) {
     return res
       .status(400)
       .send(
@@ -34,6 +34,7 @@ export const createUser = async (req: Request, res: Response) => {
         role,
       },
     });
+    console.log('🚀 ~ createUser ~ newUser:', newUser);
 
     if (req.files && req.files.img) {
       if (Array.isArray(req.files.img)) {
