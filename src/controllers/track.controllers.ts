@@ -20,7 +20,6 @@ export const getAllTracks = async (req: Request, res: Response) => {
     });
     res.status(201).send({ msg: 'Here are all your tracks', data: allTracks });
   } catch (error) {
-    console.log(error);
     res.status(400).send({ msg: 'Error', error });
   }
 };
@@ -95,7 +94,6 @@ export const createTrack = async (req: Request, res: Response) => {
       });
     }
   } catch (error) {
-    console.log(error);
     return res.status(400).send(error);
   }
 };
@@ -158,7 +156,6 @@ export const updateTrack = async (req: Request, res: Response) => {
       .status(201)
       .send({ msg: 'The track has been updated', data: updatedTrack });
   } catch (error) {
-    console.log(error);
     res.status(400).send({ msg: 'ERROR' });
   }
 };

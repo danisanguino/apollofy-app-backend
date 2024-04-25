@@ -149,7 +149,6 @@ export const updatePlaylist = async (req: Request, res: Response) => {
       .status(201)
       .send({ msg: 'The playlist has been updated', data: updatingPlaylist });
   } catch (error) {
-    console.log(error);
     res.status(400).send({ msg: 'ERROR' });
   }
 };

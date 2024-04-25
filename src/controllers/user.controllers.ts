@@ -34,7 +34,6 @@ export const createUser = async (req: Request, res: Response) => {
         role,
       },
     });
-    console.log('🚀 ~ createUser ~ newUser:', newUser);
 
     if (req.files && req.files.img) {
       if (Array.isArray(req.files.img)) {
