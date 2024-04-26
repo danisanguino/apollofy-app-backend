@@ -50,6 +50,7 @@ export const createTrack = async (req: Request, res: Response) => {
           title,
           url: resultUrl.secure_url,
           public_id_url: resultUrl.public_id,
+          duration: resultUrl.duration,
           user: { connect: { id: userId } },
           thumbnail: resultThumbnail.secure_url,
           public_id_thumbnail: resultThumbnail.public_id,

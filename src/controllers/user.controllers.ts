@@ -67,7 +67,7 @@ export const createUser = async (req: Request, res: Response) => {
 };
 
 export const updateUser = async (req: Request, res: Response) => {
-  const { name, email, password, username, role } = req.body;
+  const { name, email, password, username, role, myFavorites } = req.body;
   const { userId } = req.params;
   try {
     const updatedUser = await prisma.user.update({
@@ -78,6 +78,7 @@ export const updateUser = async (req: Request, res: Response) => {
         password,
         username,
         role,
+        myFavorites,
       },
     });
 
