@@ -1,4 +1,4 @@
-import express from 'express';
+import express, { Request, Response } from 'express';
 import userRoutes from './routes/user.routes';
 import trackRoutes from './routes/track.routes';
 import { urlencoded } from 'body-parser';
@@ -25,5 +25,11 @@ app.use('/genre', checkJwtMiddleware, genreRoutes);
 app.use('/playlist', checkJwtMiddleware, playlistRoutes);
 app.use('/artist', checkJwtMiddleware, artistsRoutes);
 app.use('/album', checkJwtMiddleware, albumsRoutes);
+
+app.get('/', (req: Request, res: Response) => {
+  res.status(200).json({
+    msg: 'Welcome to Apollofy API.',
+  });
+});
 
 export default app;
