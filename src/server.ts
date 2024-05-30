@@ -20,7 +20,7 @@ app.use(fileUpload({ useTempFiles: true, tempFileDir: './upload' }));
 
 //routes
 app.use('/user', checkJwtMiddleware, userRoutes);
-app.use('/track', trackRoutes);
+app.use('/track', checkJwtMiddleware, trackRoutes);
 app.use('/genre', checkJwtMiddleware, genreRoutes);
 app.use('/playlist', checkJwtMiddleware, playlistRoutes);
 app.use('/artist', checkJwtMiddleware, artistsRoutes);
