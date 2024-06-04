@@ -1,27 +1,28 @@
-import { Request, Response } from 'express';
-import prisma from '../db/prismaClient';
-import fs from 'fs-extra';
+import { Request, Response } from "express";
+import prisma from "../db/prismaClient";
+import fs from "fs-extra";
 import {
   uploadImageCloudinary,
   deleteImageCloudinary,
-} from '../utils/cloudinary';
+} from "../utils/cloudinary";
 
 export const getAllUsers = async (req: Request, res: Response) => {
   try {
     const allUsers = await prisma.user.findMany();
-    res.status(201).send({ msg: 'Here are all your users', data: allUsers });
+    res.status(201).send({ msg: "Here are all your users", data: allUsers });
   } catch (error) {
-    res.status(400).send({ msg: 'Error', error });
+    res.status(400).send({ msg: "Error", error });
   }
 };
 
 export const createUser = async (req: Request, res: Response) => {
   const { name, email, password, username, role } = req.body;
+  console.log({ name, email, password, username, role });
   if (!name || !email || !username) {
     return res
       .status(400)
       .send(
-        'The fields name, lastname, email, password and username are required'
+        "The fields name, lastname, email, password and username are required"
       );
   }
   try {
@@ -38,7 +39,7 @@ export const createUser = async (req: Request, res: Response) => {
     if (req.files && req.files.img) {
       if (Array.isArray(req.files.img)) {
         return res.status(400).json({
-          msg: 'You can only upload one file per user.',
+          msg: "You can only upload one file per user.",
         });
       } else {
         const result = await uploadImageCloudinary(req.files.img.tempFilePath); // Subir el archivo único
@@ -52,13 +53,13 @@ export const createUser = async (req: Request, res: Response) => {
 
         await fs.unlink(req.files.img.tempFilePath);
         return res.status(201).send({
-          msg: 'New user created',
+          msg: "New user created",
           data: newUserImg,
         });
       }
     }
     return res.status(201).send({
-      msg: 'New user created',
+      msg: "New user created",
       data: newUser,
     });
   } catch (error) {
@@ -91,7 +92,7 @@ export const updateUser = async (req: Request, res: Response) => {
       //Sube mismo método que el create
       if (Array.isArray(req.files.img)) {
         return res.status(400).json({
-          msg: 'You can only upload one file per user.',
+          msg: "You can only upload one file per user.",
         });
       } else {
         const result = await uploadImageCloudinary(req.files.img.tempFilePath); // Subir el archivo único
@@ -105,7 +106,7 @@ export const updateUser = async (req: Request, res: Response) => {
 
         await fs.unlink(req.files.img.tempFilePath);
         return res.status(201).send({
-          msg: 'New user created',
+          msg: "New user created",
           data: newUserImg,
         });
       }
@@ -113,9 +114,9 @@ export const updateUser = async (req: Request, res: Response) => {
 
     res
       .status(201)
-      .send({ msg: 'The user has been updated', data: updatedUser });
+      .send({ msg: "The user has been updated", data: updatedUser });
   } catch (error) {
-    res.status(400).send({ msg: 'ERROR' });
+    res.status(400).send({ msg: "ERROR" });
   }
 };
 
@@ -131,8 +132,8 @@ export const deleteUser = async (req: Request, res: Response) => {
 
     res
       .status(201)
-      .send({ msg: 'User has been deleted successfully', data: userDeleted });
+      .send({ msg: "User has been deleted successfully", data: userDeleted });
   } catch (error) {
-    res.status(400).send({ msg: 'ERROR' });
+    res.status(400).send({ msg: "ERROR" });
   }
 };
