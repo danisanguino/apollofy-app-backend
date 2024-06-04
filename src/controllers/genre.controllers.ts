@@ -1,11 +1,11 @@
-import { Request, Response } from 'express';
-import prisma from '../db/prismaClient';
+import { Request, Response } from "express";
+import prisma from "../db/prismaClient";
 
 export const getAllGenres = async (req: Request, res: Response) => {
   try {
     const allGenres = await prisma.genre.findMany();
     return res.status(200).send({
-      msg: 'All genres',
+      msg: "All genres",
       data: allGenres,
     });
   } catch (error) {
@@ -17,7 +17,7 @@ export const createGenre = async (req: Request, res: Response) => {
   const { name } = req.body;
 
   if (!name) {
-    return res.status(400).send('Name is required');
+    return res.status(400).send("Name is required");
   }
 
   try {
@@ -27,7 +27,7 @@ export const createGenre = async (req: Request, res: Response) => {
       },
     });
     return res.status(201).send({
-      msg: 'New genre created',
+      msg: "New genre created",
       data: newGenre,
     });
   } catch (error) {
@@ -49,7 +49,7 @@ export const updateGenre = async (req: Request, res: Response) => {
       },
     });
     return res.status(200).send({
-      msg: 'Genre updated',
+      msg: "Genre updated",
       data: genreUpdated,
     });
   } catch (error) {
@@ -65,10 +65,17 @@ export const deleteGenre = async (req: Request, res: Response) => {
       where: { id: genreId },
     });
     return res.status(200).send({
-      msg: 'Genre deleted successfully',
+      msg: "Genre deleted successfully",
       data: genreDeleted,
     });
   } catch (error) {
     return res.status(400).send(error);
   }
+};
+
+module.exports = {
+  getAllGenres,
+  createGenre,
+  updateGenre,
+  deleteGenre,
 };
