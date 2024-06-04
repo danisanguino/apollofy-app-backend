@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
 import prisma from "../db/prismaClient";
 
-const getAllGenres = async (req: Request, res: Response) => {
+export const getAllGenres = async (req: Request, res: Response) => {
   try {
     const allGenres = await prisma.genre.findMany();
     return res.status(200).send({
@@ -13,7 +13,7 @@ const getAllGenres = async (req: Request, res: Response) => {
   }
 };
 
-const createGenre = async (req: Request, res: Response) => {
+export const createGenre = async (req: Request, res: Response) => {
   const { name } = req.body;
 
   if (!name) {
@@ -35,7 +35,7 @@ const createGenre = async (req: Request, res: Response) => {
   }
 };
 
-const updateGenre = async (req: Request, res: Response) => {
+export const updateGenre = async (req: Request, res: Response) => {
   const { name } = req.body;
   const { genreId } = req.params;
 
@@ -57,7 +57,7 @@ const updateGenre = async (req: Request, res: Response) => {
   }
 };
 
-const deleteGenre = async (req: Request, res: Response) => {
+export const deleteGenre = async (req: Request, res: Response) => {
   const { genreId } = req.params;
 
   try {
