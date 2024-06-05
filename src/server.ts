@@ -8,8 +8,9 @@ import playlistRoutes from "./routes/playlist.routes";
 import artistsRoutes from "./routes/artists.routes";
 import albumsRoutes from "./routes/album.routes";
 import cors from "cors";
-import { checkJwtMiddleware } from "./middlewares/checkjwt.middlewares";
 import dotenv from "dotenv";
+import { checkJwtMiddleware } from "./middlewares/checkjwt.middlewares";
+import errorHandler from "./middlewares/error.midleware";
 
 dotenv.config();
 
@@ -29,10 +30,12 @@ app.use("/playlist", checkJwtMiddleware, playlistRoutes);
 app.use("/artist", checkJwtMiddleware, artistsRoutes);
 app.use("/album", checkJwtMiddleware, albumsRoutes);
 
-app.get("/", (req: Request, res: Response) => {
-  res.status(200).json({
-    msg: "Welcome to Apollofy API.",
-  });
-});
+app.use(errorHandler);
+
+// app.get("/", (req: Request, res: Response) => {
+//   res.status(200).json({
+//     msg: "Welcome to Apollofy API.",
+//   });
+// });
 
 export default app;
