@@ -1,0 +1,10 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+const express_1 = require("express");
+const track_controllers_1 = require("../controllers/track.controllers");
+const trackRoutes = (0, express_1.Router)();
+trackRoutes.get("/", track_controllers_1.getAllTracks);
+trackRoutes.post("/:userId", track_controllers_1.createTrack);
+trackRoutes.patch("/:trackId", track_controllers_1.updateTrack);
+trackRoutes.delete("/:trackId", track_controllers_1.deleteTrack);
+exports.default = trackRoutes;

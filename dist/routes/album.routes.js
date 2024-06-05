@@ -1,0 +1,10 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+const express_1 = require("express");
+const album_controllers_1 = require("../controllers/album.controllers");
+const albumsRoutes = (0, express_1.Router)();
+albumsRoutes.get('/', album_controllers_1.getAllAlbums);
+albumsRoutes.post('/', album_controllers_1.createAlbum);
+albumsRoutes.patch('/:albumId', album_controllers_1.updateAlbum);
+albumsRoutes.delete('/:albumId', album_controllers_1.deleteAlbum);
+exports.default = albumsRoutes;
